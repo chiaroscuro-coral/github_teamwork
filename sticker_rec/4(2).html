@@ -1,0 +1,186 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style type="text/css">
+        body {
+            background-color: black;
+        }
+        
+        .talk_con {
+            width: 600px;
+            height: 500px;
+            border: 1px solid #666;
+            margin: 50px auto 0;
+            background: rgb(47, 47, 47);
+        }
+        
+        .pw {
+            font-size: 50px;
+            color: rgb(32, 32, 32);
+            background: rgb(32, 32, 32);
+            height: 150px;
+            width: 250px;
+        }
+        
+        .talk_show {
+            width: 580px;
+            height: 420px;
+            border: 1px solid #666;
+            background:black;
+            margin: 10px auto 0;
+            overflow: auto;
+        }
+        
+        .talk_input {
+            width: 580px;
+            margin: 10px auto 0;
+            background: rgb(100, 100, 100);
+
+        }
+        
+        .whotalk {
+            font-size: 20px;
+            color: #fff;
+            border-radius: 5px;
+            width: 56px;
+            height: 32px;
+            padding:;
+            float: left;
+            outline: none;
+            background: rgb(100, 100, 100);
+        }
+        
+        .talk_word {
+            border-radius: 5px;
+            width: 420px;
+            height: 28px;
+            padding: 0px;
+            float: left;
+            margin-left: 10px;
+            outline: none;
+            text-indent: 10px;<!DOCTYPE html>
+            background: rgb(100, 100, 100);
+        }
+
+        .talk_sub {
+            font-size: 20px;
+            color: #fff;
+            border-radius: 5px;
+            width: 80px;
+            height: 32px;
+            float: left;
+            margin-left: 10px;
+            background:rgb(48,123,246);
+        }
+        
+        .atalk {
+            margin: 10px;
+            text-align: left;
+        }
+        
+        .atalk span {
+            font-size: 20px;
+            display: inline-block;
+            background: rgb(100, 100, 100);
+            border-radius: 5px;
+            color: #fff;
+            padding: 5px 10px;
+        }
+        
+        .btalk {
+            margin: 10px;
+            text-align: right;
+        }
+        
+        .btalk span {
+            font-size: 20px;
+            display: inline-block;
+            background: rgb(88,177,105);
+            border-radius: 5px;
+            color:black;
+            padding: 5px 10px;
+        }
+    </style>
+    <script type="text/javascript">
+        // 
+        window.onload = function() {
+            var Words = document.getElementById("words");
+            var Who = document.getElementById("who");
+            var TalkWords = document.getElementById("talkwords");
+            var TalkSub = document.getElementById("talksub");
+
+
+            TalkSub.onclick = function() {
+                //定义空字符串
+                var str = "";
+                if (TalkWords.value == "") {
+                    // 消息为空时弹窗
+                    alert("消息不能为空");
+                    return;
+                }
+                if (Who.value == 0) {
+                    //如果Who.value为0n那么是 A说
+                    str = '<div class="atalk"><span>A说 :' + TalkWords.value + '</span></div>';
+                    Words.innerHTML = Words.innerHTML + str;
+                } else {
+                    // b talks 
+                    str = '<div class="btalk"><span>B说 :' + TalkWords.value + '</span></div>';
+                    // pic = '<div><img src="../memes/response/1.jpg"></div>';
+                    // Words.innerHTML = Words.innerHTML + pic;
+
+                    user_query = TalkWords.value;
+                    data = {
+                        search_query: user_query
+                    }
+
+                    let src = document.getElementById("images-container");
+
+                    fetch('/search', {
+                        method: 'POST',
+                        body: JSON.stringify(data),
+                        headers: {
+                            'content-type': 'application/json'
+                        }
+                    })
+                    .then(resp => resp.json())
+                    .then(data => {
+                        src.innerHTML = '';
+                        data.forEach(imgSrc => {
+                            let imgElement = document.createElement("img");
+                            imgElement.src = imgSrc;
+                            src.appendChild(imgElement);
+                        });
+                    });
+                }
+            }
+
+        }
+    </script>
+</head>
+
+<body>
+    <div class="talk_con">
+        <div class="talk_show" id="words">
+            <div class="atalk"><span id="asay">A：你好呀！</span></div>
+            <div class="btalk"><span id="bsay">B：Hello! </span></div>
+        </div>
+        <div class="talk_input">
+            <select class="whotalk" id="who">
+                <option value="0">A：</option>
+                <option value="1">B：</option>
+            </select>
+            <input type="text" class="talk_word" id="talkwords">
+            <input type="button" value="发送" class="talk_sub" id="talksub">
+        </div>
+    </div>
+    <div id="images-container">
+    </div>
+</body>
+
+</html>
